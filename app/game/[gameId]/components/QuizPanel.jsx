@@ -1,8 +1,11 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { recordAnswer } from '@/lib/firestore';
+
 
 export default function QuizPanel({ questions, userId, currentCoins, round }) {
   const [qIdx, setQIdx] = useState(0);
@@ -38,24 +41,28 @@ export default function QuizPanel({ questions, userId, currentCoins, round }) {
     setFeedback(null);
     setShake(false);
 
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          handleAnswer(null);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  timerRef.current = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        handleAnswer(null);
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
 
-    return () => clearInterval(timerRef.current);
-  }, [qIdx, answered, allDone]);
+  return () => clearInterval(timerRef.current);
+}, []);
+
+
+
 
   // Cleanup on unmount
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current);
   }, []);
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   const handleAnswer = useCallback(async (idx) => {
     if (answered) return;
 
@@ -73,11 +80,9 @@ export default function QuizPanel({ questions, userId, currentCoins, round }) {
     if (!isCorrect) setShake(true);
 
     // Record to Firestore
-    try {
-      await recordAnswer(userId, round, q.difficulty, isCorrect, delta);
-    } catch (e) {
+    recordAnswer(userId, round, q.difficulty, isCorrect, delta).catch(e => {
       console.error('Failed to record answer:', e);
-    }
+    });
 
     // Next question
     setTimeout(() => {
@@ -88,6 +93,9 @@ export default function QuizPanel({ questions, userId, currentCoins, round }) {
       }
     }, 2500);
   }, [qIdx, answered, q, localCoins, userId, round]);
+  /* eslint-enable react-hooks/exhaustive-deps */
+
+
 
   if (!q && !allDone) return <div>Loading quiz...</div>;
 
@@ -185,7 +193,9 @@ export default function QuizPanel({ questions, userId, currentCoins, round }) {
           <span>Loss: <strong className="text-red-500">{q.penalty || 0}</strong></span>
         </div>
       )}
+
     </div>
   );
-}'
+}
+
 

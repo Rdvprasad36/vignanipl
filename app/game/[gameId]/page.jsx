@@ -203,5 +203,7 @@ function GameLoading() {
       <div className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Connecting to server...</div>
     </div>
   );
-}'
+}
+
+
 
