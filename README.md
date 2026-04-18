@@ -1,4 +1,4 @@
-#vignanipl 
+## vignanipl 
 A platform for doing an event IPL quiz and auction as a club manger of student activity council in Vignan's Institute of Information Technology
 
 
