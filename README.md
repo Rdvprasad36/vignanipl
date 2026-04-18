@@ -1,3 +1,9 @@
+#vignanipl 
+A platform for doing an event IPL quiz and auction as a club manger of student activity council in Vignan's Institute of Information Technology
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
